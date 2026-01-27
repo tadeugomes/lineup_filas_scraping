@@ -18,7 +18,13 @@ URL = "https://www.portodesantos.com.br/informacoes-operacionais/operacoes-portu
 def _parse_tables(html: bytes) -> pd.DataFrame:
     """Parseia todas as tabelas da página e combina em um único DataFrame."""
     try:
-        tables = pd.read_html(html, flavor="lxml")
+        from io import StringIO
+        # Converter bytes para string antes de parsear
+        if isinstance(html, bytes):
+            html_str = html.decode('utf-8', errors='ignore')
+        else:
+            html_str = html
+        tables = pd.read_html(StringIO(html_str), flavor="lxml")
     except Exception as e:
         logger.warning(f"pd.read_html falhou: {e}")
         return pd.DataFrame()
@@ -150,14 +156,9 @@ def _standardize_df(df: pd.DataFrame) -> pd.DataFrame:
 
 def _filter_vegetais(df: pd.DataFrame) -> pd.DataFrame:
     """Filtra apenas cargas de granéis vegetais."""
-    if df.empty or "carga" not in df.columns:
-        return df
-    
-    mask = df["carga"].str.upper().str.contains("|".join(VEGETAIS), na=False)
-    filtered = df.loc[mask].copy()
-    
-    logger.info(f"Santos: Filtrado {len(filtered)} de {len(df)} registros (granéis vegetais)")
-    return filtered
+    # REMOVIDO: Agora retorna todos os dados sem filtrar
+    logger.info(f"Santos: Mantendo todos os {len(df)} registros (filtro de vegetais desabilitado)")
+    return df
 
 
 def run() -> pd.DataFrame:

@@ -217,15 +217,9 @@ def _filter_vegetais(df: pd.DataFrame) -> pd.DataFrame:
     if df.empty or "carga" not in df.columns:
         return df
     
-    mask = df["carga"].str.upper().str.contains("|".join(VEGETAIS), na=False)
-    filtered = df.loc[mask].copy()
-    
-    if len(filtered) == 0:
-        logger.info("Nenhum granel vegetal identificado no filtro estrito, mantendo todos para análise manual posterior")
-        return df
-    
-    logger.info(f"Filtrado {len(filtered)} de {len(df)} registros (granéis vegetais)")
-    return filtered
+    # REMOVIDO: Agora retorna todos os dados sem filtrar
+    logger.info(f"Itaqui PDF: Mantendo todos os {len(df)} registros (filtro de vegetais desabilitado)")
+    return df
 
 def run() -> pd.DataFrame:
     """Executa coleta do Porto do Itaqui."""

@@ -74,7 +74,13 @@ def _parse_tables(html: bytes) -> pd.DataFrame:
             return pd.concat(dfs, ignore_index=True)
 
         # Fallback: pd.read_html
-        tables = pd.read_html(html, flavor="lxml")
+        from io import StringIO
+        # Converter bytes para string antes de parsear
+        if isinstance(html, bytes):
+            html_str = html.decode('utf-8', errors='ignore')
+        else:
+            html_str = html
+        tables = pd.read_html(StringIO(html_str), flavor="lxml")
         if not tables:
             return pd.DataFrame()
 
@@ -136,16 +142,8 @@ def _standardize_df(df: pd.DataFrame, porto_label: str, url: str) -> pd.DataFram
 
 def _filter_vegetais(df: pd.DataFrame) -> pd.DataFrame:
     """Filtra apenas cargas de granéis vegetais."""
-    if df.empty or "carga" not in df.columns:
-        return df
-    
-    mask = df["carga"].str.upper().str.contains("|".join(VEGETAIS), na=False)
-    filtered = df.loc[mask].copy()
-    
-    if filtered.empty:
-        return df # Se não achar nada, retorna original para não perder dados se o nome mudar
-        
-    return filtered
+    # REMOVIDO: Agora retorna todos os dados sem filtrar
+    return df
 
 def run_port(key: str) -> pd.DataFrame:
     """Executa coleta para um porto específico da CODEBA."""

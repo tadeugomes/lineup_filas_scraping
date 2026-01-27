@@ -93,14 +93,9 @@ def _parse_html(html: bytes) -> pd.DataFrame:
 
 def _filter_vegetais(df: pd.DataFrame) -> pd.DataFrame:
     """Filtra apenas cargas de granéis vegetais."""
-    if df.empty or "carga" not in df.columns:
-        return df
-    
-    mask = df["carga"].str.upper().str.contains("|".join(VEGETAIS), na=False)
-    filtered = df.loc[mask].copy()
-    
-    logger.info(f"SFS Seatrade: Filtrado {len(filtered)} de {len(df)} registros (granéis vegetais)")
-    return filtered
+    # REMOVIDO: Agora retorna todos os dados sem filtrar
+    logger.info(f"SFS Seatrade: Mantendo todos os {len(df)} registros (filtro de vegetais desabilitado)")
+    return df
 
 def run() -> pd.DataFrame:
     """Executa coleta do Porto de São Francisco do Sul (Seatrade)."""

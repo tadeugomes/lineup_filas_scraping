@@ -152,18 +152,12 @@ def run() -> pd.DataFrame:
         df_total["produto"] = ""
     df_total["id_evento"] = df_total.apply(make_id, axis=1)
     
-    # Filtro de vegetais (opcional, mas seguindo o padrão do projeto)
-    mask = df_total["carga"].str.upper().str.contains("|".join(VEGETAIS), na=False)
-    filtered = df_total.loc[mask].copy()
-    
-    if filtered.empty:
-        logger.info("Nenhum vegetal encontrado no Itaqui Web hoje. Salvando dados totais para verificação.")
-        save_parquet("curated", "itaqui_web", df_total)
-    else:
-        save_parquet("curated", "itaqui_web", filtered)
-        logger.success(f"Itaqui Web: {len(filtered)} registros de vegetais salvos")
-        
-    return filtered
+    # Filtro de vegetais - REMOVIDO: Agora salva todos os dados sem filtrar
+    logger.info(f"Itaqui Web: Salvando todos os {len(df_total)} registros (filtro de vegetais desabilitado)")
+    save_parquet("curated", "itaqui_web", df_total)
+    logger.success(f"Itaqui Web: {len(df_total)} registros salvos")
+
+    return df_total
 
 if __name__ == "__main__":
     run()

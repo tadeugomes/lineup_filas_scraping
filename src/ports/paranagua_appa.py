@@ -81,7 +81,13 @@ def run():
     save_raw("paranagua_appa", html, "html")
 
     try:
-        tables = pd.read_html(html, flavor="lxml")
+        from io import StringIO
+        # Converter bytes para string antes de parsear
+        if isinstance(html, bytes):
+            html_str = html.decode('utf-8', errors='ignore')
+        else:
+            html_str = html
+        tables = pd.read_html(StringIO(html_str), flavor="lxml")
     except ValueError:
         logger.warning("Paranagua/Antonina: nenhuma tabela encontrada (provavel pagina de login).")
         empty = _empty_df()
@@ -148,9 +154,7 @@ def run():
             df["berco"] = df[cand].astype(str)
             break
 
-    # Filter for vegetal
-    mask = df["carga"].str.upper().str.contains("|".join(VEGETAIS), na=False)
-    df = df.loc[mask].copy()
+    # Filter for vegetal - REMOVIDO: Agora retorna todos os dados
 
     if df.empty:
         empty = _empty_df()

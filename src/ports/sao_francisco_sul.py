@@ -104,16 +104,9 @@ def _filter_vegetais(df: pd.DataFrame) -> pd.DataFrame:
     if df.empty or "carga" not in df.columns:
         return df
     
-    mask = df["carga"].str.upper().str.contains("|".join(VEGETAIS), na=False)
-    filtered = df.loc[mask].copy()
-    
-    logger.info(f"SFS: Filtrado {len(filtered)} de {len(df)} registros (granéis vegetais)")
-    
-    if len(filtered) == 0:
-        logger.info("Nenhum vegetal encontrado em SFS no momento.")
-        return df
-        
-    return filtered
+    # REMOVIDO: Agora retorna todos os dados sem filtrar
+    logger.info(f"SFS: Mantendo todos os {len(df)} registros (filtro de vegetais desabilitado)")
+    return df
 
 
 def run() -> pd.DataFrame:

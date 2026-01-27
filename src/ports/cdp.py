@@ -141,10 +141,7 @@ def _standardize_df(df: pd.DataFrame, porto_label: str, url: str) -> pd.DataFram
     if "operador" in df.columns:
         df["operacao"] = df["operador"].astype(str)
 
-    # filter vegetal (best-effort)
-    mask = df["carga"].str.upper().str.contains("|".join(VEGETAIS), na=False)
-    if mask.any():
-        df = df.loc[mask].copy()
+    # filter vegetal (best-effort) - REMOVIDO: Agora retorna todos os dados
 
     df["produto"] = df["carga"].apply(normalize_produto)
     df["id_evento"] = df.apply(make_id, axis=1)
@@ -162,7 +159,13 @@ def run_all():
         save_raw(porto_slug, html, "html")
 
         try:
-            tables = pd.read_html(html, flavor="lxml")
+            from io import StringIO
+            # Converter bytes para string antes de parsear
+            if isinstance(html, bytes):
+                html_str = html.decode('utf-8', errors='ignore')
+            else:
+                html_str = html
+            tables = pd.read_html(StringIO(html_str), flavor="lxml")
         except ValueError:
             tables = []
             
