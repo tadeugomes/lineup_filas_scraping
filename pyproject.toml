@@ -1,0 +1,14 @@
+[project]
+name = "lineup-pipeline"
+version = "0.1.0"
+dependencies = [
+  "pandas",
+  "pyarrow",
+  "httpx",
+  "beautifulsoup4",
+  "lxml",
+  "camelot-py[cv]",
+  "pdfplumber",
+  "python-dateutil",
+  "loguru"
+]
