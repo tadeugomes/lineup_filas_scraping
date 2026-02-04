@@ -148,6 +148,21 @@ def _standardize_df(df: pd.DataFrame, porto_label: str, url: str) -> pd.DataFram
 
     df["produto"] = df["carga"].apply(normalize_produto)
     df["id_evento"] = df.apply(make_id, axis=1)
+
+    # Garantir tipos compatíveis com Parquet (evita objetos mistos, ex.: float/str)
+    def _to_str(v):
+        if pd.isna(v):
+            return ""
+        if isinstance(v, bytes):
+            try:
+                return v.decode("utf-8", errors="ignore")
+            except Exception:
+                return str(v)
+        return str(v)
+
+    for col in df.columns:
+        if df[col].dtype == object:
+            df[col] = df[col].map(_to_str)
     
     return df
 

@@ -12,7 +12,7 @@ import time
 
 from src.core.fetch import fetch_url
 from src.core.storage import save_raw, save_parquet
-from src.core.normalize import normalize_produto, make_id, VEGETAIS
+from src.core.normalize import normalize_produto, make_id
 
 URLS = {
     "ATRACADO": "https://www.portodoitaqui.com/porto-agora/navios/atracados",
@@ -152,18 +152,11 @@ def run() -> pd.DataFrame:
         df_total["produto"] = ""
     df_total["id_evento"] = df_total.apply(make_id, axis=1)
     
-    # Filtro de vegetais (opcional, mas seguindo o padrão do projeto)
-    mask = df_total["carga"].str.upper().str.contains("|".join(VEGETAIS), na=False)
-    filtered = df_total.loc[mask].copy()
-    
-    if filtered.empty:
-        logger.info("Nenhum vegetal encontrado no Itaqui Web hoje. Salvando dados totais para verificação.")
-        save_parquet("curated", "itaqui_web", df_total)
-    else:
-        save_parquet("curated", "itaqui_web", filtered)
-        logger.success(f"Itaqui Web: {len(filtered)} registros de vegetais salvos")
+    # Para Itaqui, salvar sempre todos os dados disponíveis
+    save_parquet("curated", "itaqui_web", df_total)
+    logger.success(f"Itaqui Web: {len(df_total)} registros salvos (sem filtro de vegetais)")
         
-    return filtered
+    return df_total
 
 if __name__ == "__main__":
     run()
